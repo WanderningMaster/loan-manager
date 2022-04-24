@@ -1,15 +1,12 @@
-import express from "express";
 import 'dotenv/config';
+
+import { server } from "./server";
 import { logger } from "./services/logger/logger.service";
 import { connection } from "./data/db/connection";
-
-import { userRouter } from "./api/user/user.router";
 
 const { 
     SERVER_PORT,
 } = process.env;
-
-const app = express();
 
 connection
     .then(async () => {
@@ -19,9 +16,6 @@ connection
         logger.error(err);
     })
 
-app.use(express.json());    
-app.use("/api/user", userRouter);
-
-app.listen(SERVER_PORT, () => {
+server.listen(SERVER_PORT, () => {
     logger.info(`Server running on ${SERVER_PORT} port`);
-})
+});
