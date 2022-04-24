@@ -1,6 +1,6 @@
 import express from "express";
 import { errorHandler } from "../../middlewares/errorHandler.middleware";
-import { userApi } from "./user.api";
+import { userApi } from "../../api/user/user.api";
 
 const userRouter = express.Router();
 

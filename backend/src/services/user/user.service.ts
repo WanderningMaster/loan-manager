@@ -4,7 +4,9 @@ import { HttpCode } from "../../common/enums/http/http-code.enum";
 
 class UserService {
     async registration(username: string, password: string): Promise<User> {
-        const isUserCreated = this.getUser(username);
+        const isUserCreated = await UserModel.findOne({
+            username
+        });
         if(isUserCreated){
             throw new ApiError("User is already exists", HttpCode.BAD_REQUEST);
         };
