@@ -42,6 +42,16 @@ class UserService {
         }
         return user;
     }
+    async removeById(id: string): Promise<User>{
+        const deletedUser = await UserModel.findByIdAndDelete(
+            id
+        )
+        if(!deletedUser){
+            throw new ApiError("User not found", HttpCode.BAD_REQUEST);
+        }
+
+        return deletedUser;
+    }
     // async login(username: string, password: string): Promise<User>{
     //     const storedUser = await UserModel.findOne({username});
     //     if(!storedUser){

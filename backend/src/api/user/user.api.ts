@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction} from "express";
+import { HttpCode } from "../../common/enums/http/http-code.enum";
 import { userService } from "../../services/user/user.service";
 
 class UserApi {
@@ -7,7 +8,7 @@ class UserApi {
             const {username, password} = _req.body;
             const user = await userService.registration(username, password);
             res
-                .status(200)
+                .status(HttpCode.OK)
                 .json({user});
         }
         catch(err: any){
@@ -18,7 +19,7 @@ class UserApi {
         try {
             const users = await userService.getAllUsers();
             res
-                .status(200)
+                .status(HttpCode.OK)
                 .json({users});
         } catch(error: any){
             next(error);
@@ -30,7 +31,7 @@ class UserApi {
             const user = await userService.getUser(username);
 
             res
-                .status(200)
+                .status(HttpCode.OK)
                 .json({user});
         } catch(error: any){
             next(error)
@@ -42,9 +43,22 @@ class UserApi {
             const user = await userService.getUserById(id);
 
             res
-                .status(200)
+                .status(HttpCode.OK)
                 .json({user});
         } catch(error: any){
+            next(error);
+        }
+    }
+    async deleteUserById(_req: Request, res: Response, next: NextFunction){
+        try {
+            const { id } = _req.params;
+            const deletedUser = await userService.removeById(id);
+
+            res
+                .status(HttpCode.OK)
+                .json({deletedUser});
+        }
+        catch(error: any){
             next(error);
         }
     }
