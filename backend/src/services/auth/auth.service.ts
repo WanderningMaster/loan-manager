@@ -7,6 +7,7 @@ import { Token } from "../../data/models/Token/Token.model";
 
 import bcrypt from "bcrypt";
 import { JWTPair } from "src/common/interfaces/jwt/JWTPair.interface";
+import { userService } from "../user/user.service";
 
 class AuthService {
     async login(username: string, password: string): Promise<JWTPair>{
@@ -25,7 +26,34 @@ class AuthService {
 
         const jwtPair = await tokenService.generateTokens(payload);
         const {refreshToken} = jwtPair;
-        tokenService.saveToken({userId: _id.toString(), refreshToken} as Token);
+        await tokenService.saveToken({userId: _id.toString(), refreshToken} as Token);
+
+        return jwtPair;
+    }
+    async logout(refreshToken: string): Promise<void>{
+        if(!refreshToken){
+            throw new ApiError("Unauthorized error", HttpCode.UNAUTHORIZED_ERROR);
+        }
+        await tokenService.removeToken(refreshToken);
+    }
+    async refresh(token: string): Promise<JWTPair>{
+        if(!token){
+            throw new ApiError("Unauthorized error", HttpCode.UNAUTHORIZED_ERROR);
+        }
+        const userData = await tokenService.validateRefreshToken(token);
+        const isTokenStored = await tokenService.isTokenStored(token);
+        if(!userData || !isTokenStored){
+            throw new ApiError("Unauthorized error", HttpCode.UNAUTHORIZED_ERROR);
+        }
+
+        const {_id} = userData;
+        const user = await userService.getUserById(_id.toString());
+        const {username} = user;
+        const payload = {_id, username};
+
+        const jwtPair = await tokenService.generateTokens(payload);
+        const {refreshToken} = jwtPair;
+        await tokenService.saveToken({userId: _id.toString(), refreshToken} as Token);
 
         return jwtPair;
     }

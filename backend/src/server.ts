@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 
 import { logRequest } from "./middlewares/logRequest.middleware";
 import { errorHandler } from "./middlewares/errorHandler.middleware";
@@ -8,6 +9,7 @@ const server = express();
 
 server.use(express.json());
 server.use(logRequest);
+server.use(cookieParser());
 
 initRoutes();
 

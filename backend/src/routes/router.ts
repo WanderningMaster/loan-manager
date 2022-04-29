@@ -1,6 +1,6 @@
 import { server } from "../server";
-import { authRouter } from "./auth/auth.router";
 
+import { authRouter } from "./auth/auth.router";
 import { userRouter } from "./user/user.router";
 
 

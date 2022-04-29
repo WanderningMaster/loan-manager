@@ -52,21 +52,6 @@ class UserService {
 
         return deletedUser;
     }
-    // async login(username: string, password: string): Promise<User>{
-    //     const storedUser = await UserModel.findOne({username});
-    //     if(!storedUser){
-    //         throw new Error("User not found");
-    //     }
-    //     const hashedPassword = storedUser.password;
-        
-    //     const match = await bcrypt.compare(password, hashedPassword);
-    //     if(!match){
-    //         throw new Error("Invalid username or password");
-    //     }
-    //     return storedUser;
-    //     //create token pair
-    // }
-
 }
 
 export const userService = new UserService();

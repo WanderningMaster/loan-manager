@@ -11,8 +11,34 @@ class AuthApi {
             const {accessToken, refreshToken} = await authService.login(username, password);
             res
                 .status(HttpCode.OK)
-                .cookie('token',accessToken, { maxAge: 900000, httpOnly: true })
-                .json({refreshToken});
+                .cookie('refreshToken',refreshToken, { maxAge: 15*24*60*60*1000, httpOnly: true })
+                .json({accessToken});
+        }
+        catch(err: any){
+            next(err);
+        }
+    }
+    async logout(_req: Request, res: Response, next: NextFunction){
+        try{
+            const {refreshToken} = _req.cookies;
+            await authService.logout(refreshToken);
+            res
+                .status(HttpCode.OK)
+                .clearCookie("refreshToken")
+                .end();
+        }
+        catch(err: any){
+            next(err);
+        }
+    }
+    async refresh(_req: Request, res: Response, next: NextFunction){
+        try{
+            const {refreshToken} = _req.cookies;
+            const jwtPair = await authService.refresh(refreshToken);
+            res
+                .status(HttpCode.OK)
+                .cookie('refreshToken',jwtPair.refreshToken, { maxAge: 15*24*60*60*1000, httpOnly: true })
+                .json({accessToken: jwtPair.accessToken});
         }
         catch(err: any){
             next(err);
