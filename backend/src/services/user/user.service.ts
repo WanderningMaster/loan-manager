@@ -1,9 +1,10 @@
 import { ApiError } from "../../common/exceptions/Api.error";
 import { UserModel, User} from "../../data/models/User/User.model";
 import { HttpCode } from "../../common/enums/http/http-code.enum";
+import { UserDto } from "../../data/dtos/user.dto";
 
 class UserService {
-    async registration(username: string, password: string): Promise<User> {
+    async registration(username: string, password: string): Promise<UserDto> {
         const isUserCreated = await UserModel.findOne({
             username
         });
@@ -16,14 +17,16 @@ class UserService {
             password
         });
 
-        return user;
+        const userDto = new UserDto(user);
+        return userDto;
     }
-    async getAllUsers(): Promise<User[]>{
+    async getAllUsers(): Promise<UserDto[]>{
         const users = await UserModel.find({});
 
-        return users;
+        const userDtos = users.map(user => new UserDto(user));
+        return userDtos;
     }
-    async getUser(username: string): Promise<User>{
+    async getUser(username: string): Promise<UserDto>{
         const user = await UserModel.findOne({
             username
         });
@@ -31,18 +34,21 @@ class UserService {
             throw new ApiError("User not found", HttpCode.BAD_REQUEST);
         }
 
-        return user;
+        const userDto = new UserDto(user);
+        return userDto;
     }
-    async getUserById(id: string): Promise<User>{
+    async getUserById(id: string): Promise<UserDto>{
         const user = await UserModel.findById(
             id
         );
         if(!user){
             throw new ApiError("User not found", HttpCode.BAD_REQUEST);
         }
-        return user;
+
+        const userDto = new UserDto(user);
+        return userDto;
     }
-    async removeById(id: string): Promise<User>{
+    async removeById(id: string): Promise<UserDto>{
         const deletedUser = await UserModel.findByIdAndDelete(
             id
         )
@@ -50,7 +56,8 @@ class UserService {
             throw new ApiError("User not found", HttpCode.BAD_REQUEST);
         }
 
-        return deletedUser;
+        const userDto = new UserDto(deletedUser);
+        return userDto;
     }
 }
 

@@ -1,5 +1,5 @@
 import { ApiError } from "../../common/exceptions/Api.error";
-import { UserModel, User} from "../../data/models/User/User.model";
+import { UserModel } from "../../data/models/User/User.model";
 import { HttpCode } from "../../common/enums/http/http-code.enum";
 
 import { tokenService } from "../token/token.service";

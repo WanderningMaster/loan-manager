@@ -68,11 +68,11 @@ class TokenService {
     }
     async generateTokens(payload: JWTPayload): Promise<JWTPair>{
         const refreshToken = jwt.sign(payload, <string>JWT_REFRESH_SECRET_KEY, {
-            expiresIn: JWT_REFRESH_EXPIRATION
+            expiresIn: '15d'
         });
 
         const accessToken = jwt.sign(payload, <string>JWT_ACCESS_SECRET_KEY, {
-            expiresIn: JWT_ACCESS_EXPIRATION
+            expiresIn: '15m'
         });
         return {
             accessToken,
