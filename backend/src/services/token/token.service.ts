@@ -6,6 +6,7 @@ import { JWTPair } from "../../common/interfaces/jwt/JWTPair.interface";
 import jwt from "jsonwebtoken";
 
 import "dotenv/config";
+import { logger } from "../logger/logger.service";
 
 const {
     JWT_ACCESS_SECRET_KEY,
@@ -52,25 +53,50 @@ class TokenService {
     async removeById(id: string): Promise<void>{
         const deletedToken = await TokenModel.findByIdAndDelete(
             id
-        )
+        );
+        if(!deletedToken){
+            throw new ApiError("Token not found", HttpCode.BAD_REQUEST);
+        }
+    }
+    async removeToken(refreshToken: string): Promise<void>{
+        const deletedToken = await TokenModel.deleteOne({
+            refreshToken
+        });
         if(!deletedToken){
             throw new ApiError("Token not found", HttpCode.BAD_REQUEST);
         }
     }
     async generateTokens(payload: JWTPayload): Promise<JWTPair>{
         const refreshToken = jwt.sign(payload, <string>JWT_REFRESH_SECRET_KEY, {
-            expiresIn: JWT_REFRESH_EXPIRATION
+            expiresIn: '15d'
         });
 
         const accessToken = jwt.sign(payload, <string>JWT_ACCESS_SECRET_KEY, {
-            expiresIn: JWT_ACCESS_EXPIRATION
+            expiresIn: '15m'
         });
         return {
             accessToken,
             refreshToken
         };
     }
-    //TODO: validate access token, validate refresh token,
+    async validateAccessToken(token: string): Promise<JWTPayload | undefined>{
+        try {
+            const userData = jwt.verify(token, <string>JWT_ACCESS_SECRET_KEY) as JWTPayload;
+            return userData;
+        } catch (error: any) {
+            logger.error(error.message);
+            return undefined;
+        }
+    }
+    async validateRefreshToken(token: string): Promise<JWTPayload | undefined>{
+        try {
+            const userData = jwt.verify(token, <string>JWT_REFRESH_SECRET_KEY) as JWTPayload;
+            return userData;
+        } catch (error: any) {
+            logger.error(error.message);
+            return undefined;
+        }
+    }
 }
 
 export const tokenService = new TokenService();

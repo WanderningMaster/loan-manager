@@ -23,7 +23,7 @@ UserScheme.pre("save", async function (next: NextFunction) {
     const thisObj = this as User;
     const HASH_ROUNDS = 10;
 
-    if (!this.isModified('password')) {
+    if (!this.  isModified('password')) {
         return next();
     }
 

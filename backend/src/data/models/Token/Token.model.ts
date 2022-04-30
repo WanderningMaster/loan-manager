@@ -1,6 +1,4 @@
 import { Schema, model } from 'mongoose';
-import bcrypt from "bcrypt";
-import { NextFunction } from 'express';
 
 interface Token extends Document{
     userId: string;
