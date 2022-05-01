@@ -3,18 +3,6 @@ import { HttpCode } from "../../common/enums/http/http-code.enum";
 import { userService } from "../../services/user/user.service";
 
 class UserApi {
-    async reg(_req: Request, res: Response, next: NextFunction){
-        try{
-            const {username, password} = _req.body;
-            const user = await userService.registration(username, password);
-            res
-                .status(HttpCode.OK)
-                .json({user});
-        }
-        catch(err: any){
-            next(err);
-        }
-    }
     async getAllUsers(_req: Request, res: Response, next: NextFunction){
         try {
             const users = await userService.getAllUsers();
