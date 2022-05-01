@@ -1,10 +1,23 @@
 import { Request, Response, NextFunction} from "express";
 import { HttpCode } from "../../common/enums/http/http-code.enum";
 import { authService } from "../../services/auth/auth.service";
+import { userService } from "../../services/user/user.service";
 
 import "dotenv/config";
 
 class AuthApi {
+    async reg(_req: Request, res: Response, next: NextFunction){
+        try{
+            const {username, password} = _req.body;
+            const user = await userService.registration(username, password);
+            res
+                .status(HttpCode.OK)
+                .json({user});
+        }
+        catch(err: any){
+            next(err);
+        }
+    }
     async login(_req: Request, res: Response, next: NextFunction){
         try{
             const {username, password} = _req.body;
